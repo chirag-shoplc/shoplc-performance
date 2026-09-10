@@ -63,6 +63,16 @@ function StatusPill({ url, dateKeys, days }) {
   );
 }
 
+function ReportLink({ url, dateKeys, days }) {
+  const latest = latestFor(url, dateKeys, days);
+  if (!latest || !latest.report_url) return <span style={{ color: "var(--ink-soft)" }}>—</span>;
+  return (
+    <a href={latest.report_url} target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
+      full report ↗
+    </a>
+  );
+}
+
 function DeltaCell({ url, dateKeys, days }) {
   const first = firstFor(url, dateKeys, days);
   const latest = latestFor(url, dateKeys, days);
@@ -166,13 +176,14 @@ function OverviewTab({ catalog, dateKeys, days }) {
           <th>Latest</th>
           <th>Last {dateKeys.length || 15} days</th>
           <th>Δ</th>
+          <th>Report</th>
         </tr>
       </thead>
       <tbody>
         {groups.map((g) => (
           <>
             <tr className="group-row" key={g}>
-              <td colSpan={4}>{g}</td>
+              <td colSpan={5}>{g}</td>
             </tr>
             {catalog
               .filter((c) => c.group === g)
@@ -191,6 +202,9 @@ function OverviewTab({ catalog, dateKeys, days }) {
                   <td>
                     <DeltaCell url={item.url} dateKeys={dateKeys} days={days} />
                   </td>
+                  <td>
+                    <ReportLink url={item.url} dateKeys={dateKeys} days={days} />
+                  </td>
                 </tr>
               ))}
           </>
@@ -207,7 +221,7 @@ function DayTab({ catalog, dateKeys, days }) {
       <div className="empty">
         <b>No day-wise reports yet.</b>
         <br />
-        Once the admin uploads a day's results, they'll show up here.
+        Once you commit a <code>data/YYYY-MM-DD.json</code> file, it'll show up here.
       </div>
     );
   }
@@ -234,12 +248,13 @@ function DayTab({ catalog, dateKeys, days }) {
             <th>LCP</th>
             <th>CLS</th>
             <th>TBT</th>
+            <th>Report</th>
           </tr>
         </thead>
         <tbody>
           {rows.length === 0 && (
             <tr>
-              <td colSpan={5} style={{ color: "var(--ink-soft)" }}>
+              <td colSpan={6} style={{ color: "var(--ink-soft)" }}>
                 No pages tested this day.
               </td>
             </tr>
@@ -262,6 +277,15 @@ function DayTab({ catalog, dateKeys, days }) {
               <td>{rec.status === "done" && typeof (rec.lcp_ms ?? rec.lcp) === "number" ? `${((rec.lcp_ms ?? rec.lcp) / 1000).toFixed(2)}s` : "—"}</td>
               <td>{rec.status === "done" && typeof rec.cls === "number" ? rec.cls : "—"}</td>
               <td>{rec.status === "done" && typeof (rec.tbt_ms ?? rec.tbt) === "number" ? `${rec.tbt_ms ?? rec.tbt}ms` : "—"}</td>
+              <td>
+                {rec.report_url ? (
+                  <a href={rec.report_url} target="_blank" rel="noreferrer" style={{ color: "var(--accent)" }}>
+                    full report ↗
+                  </a>
+                ) : (
+                  <span style={{ color: "var(--ink-soft)" }}>—</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
@@ -285,9 +309,6 @@ export default function Dashboard({ dateKeys, days, catalog, error }) {
         </div>
         <div className="meta">
           <div>{dateKeys.length ? `updated ${fmtDay(dateKeys[dateKeys.length - 1])}` : "no data yet"}</div>
-          <a className="admin-link" href="/admin">
-            admin
-          </a>
         </div>
       </header>
 
@@ -301,9 +322,9 @@ export default function Dashboard({ dateKeys, days, catalog, error }) {
 
       {!error && dateKeys.length === 0 && (
         <div className="empty">
-          <b>No results uploaded yet.</b>
+          <b>No results committed yet.</b>
           <br />
-          Run the tracker locally, then have an admin upload today&apos;s file from <code>/admin</code>.
+          Run the tracker locally, then commit and push a <code>data/YYYY-MM-DD.json</code> file.
         </div>
       )}
 

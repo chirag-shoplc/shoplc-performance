@@ -1,58 +1,61 @@
 # ShopLC Performance Dashboard
 
-Public, read-only report of GTmetrix scores across ~25 campaign pages, with
-an admin-only upload page. This is the Vercel showcase companion to the
-local tracker you run in Cursor.
+Public, read-only report of GTmetrix scores across ~25 campaign pages.
+This is the Vercel showcase companion to the local tracker you run in
+Cursor.
 
-- **`/`** — public. Fleet average trend chart, per-page scores grouped by
-  campaign, sparkline history, and a day-by-day view. No login required.
-- **`/admin`** — password-protected. Upload the `data/YYYY-MM-DD.json`
-  file produced by the local tracker; it gets merged into that day's
-  report.
+- **`/`** — the report. Fleet average trend chart, per-page scores
+  grouped by campaign, sparkline history, and a day-by-day view. No
+  login, open to anyone with the link.
 
-Data is stored in **Vercel Blob** as one JSON file per day
-(`data/YYYY-MM-DD.json`), so nothing needs a separate database.
+There is no admin UI or password. "Who can update the report" is simply
+"who can push to this repo" — updating means committing a new
+`data/YYYY-MM-DD.json` file and pushing, which triggers a normal Vercel
+rebuild.
+
+## How data gets in
+
+1. Run the local tracker (the separate `perf-tracker/` project, driven by
+   Claude Code + the GTmetrix MCP connector in Cursor). It writes
+   `perf-tracker/data/2026-09-10.json` (one file per day, keyed by URL).
+2. Copy that file into **this** repo's `data/` folder, keeping the same
+   `YYYY-MM-DD.json` name.
+3. `git add data/2026-09-10.json && git commit -m "perf: 2026-09-10" && git push`
+4. Vercel rebuilds automatically. The site always shows the most recent
+   15 day-files present in `data/`.
+
+Each file is a plain object keyed by URL:
+
+```json
+{
+  "https://www.shoplc.com/pages/cane": {
+    "status": "done",
+    "score": 87,
+    "grade": "A",
+    "lcp_ms": 1800,
+    "cls": 0.02,
+    "tbt_ms": 120,
+    "tested_at": "2026-09-10T09:15:00.000Z"
+  }
+}
+```
+
+You can commit a partial day (only some URLs tested) — the report just
+shows "not tested" for the rest.
 
 ## Deploy
 
-1. Push this folder to a GitHub repo, then import it in Vercel
-   (New Project → import repo). Framework preset: Next.js (auto-detected).
-2. In the Vercel project: **Storage → Create Database → Blob**, then
-   connect it to this project. That automatically sets the
-   `BLOB_READ_WRITE_TOKEN` environment variable — you don't need to copy
-   it yourself.
-3. Still in **Settings → Environment Variables**, add:
-   - `ADMIN_PASSWORD` — the password you'll use to sign in at `/admin`.
-   - `SESSION_SECRET` — any long random string (used to sign the admin
-     session cookie).
-4. Deploy. Visit `/` for the public report and `/admin` to sign in and
-   upload a day's file.
-
-## Uploading results
-
-After running the local tracker in Cursor (see the `perf-tracker/`
-project and its `PERF_TRACKER.md`), you'll have a file like
-`perf-tracker/data/2026-09-10.json`. Go to `/admin` on the deployed site,
-sign in, pick that date, and upload the file. It merges into whatever's
-already recorded for that day, so uploading a partial run (e.g. only one
-campaign group) won't erase the rest of that day's results.
-
-The public page always shows the most recent 15 days that have data.
+1. Push this folder to a GitHub repo, import it in Vercel (Next.js is
+   auto-detected). No environment variables or storage add-ons needed.
+2. Deploy. Every future push to the default branch (including new
+   `data/*.json` files) triggers a rebuild and updates the report.
 
 ## Local development
 
 ```
 npm install
-cp .env.example .env.local   # fill in ADMIN_PASSWORD, SESSION_SECRET,
-                              # and BLOB_READ_WRITE_TOKEN (copy the token
-                              # from Vercel's dashboard for local testing)
 npm run dev
 ```
 
-## Notes
-
-- The admin password is a single shared secret, not per-user accounts —
-  fine for an internal showcase, but don't reuse a password you care
-  about elsewhere.
-- The public `/` page and `/api/data` route never require authentication
-  by design — only the upload endpoint (`/api/admin/upload`) is gated.
+Drop a test file straight into `data/` locally to see the report
+populate without needing to deploy first.
