@@ -1,8 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "ShopLC Performance",
-  description: "Storefront performance tracking, refreshed from GTmetrix runs.",
+  title: "ShopLC · Campaign page speed",
+  description:
+    "How quickly ShopLC campaign pages load for shoppers, refreshed from daily GTmetrix runs.",
 };
 
 export default function RootLayout({ children }) {
