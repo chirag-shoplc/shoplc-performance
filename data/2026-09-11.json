@@ -1,0 +1,258 @@
+{
+  "https://www.shoplc.com/": {
+    "status": "done",
+    "score": 63,
+    "grade": "D",
+    "lcp_ms": 1900,
+    "cls": 0.18,
+    "tbt_ms": 733,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/HSpYG1EI/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/cane": {
+    "status": "done",
+    "score": 69,
+    "grade": "D",
+    "lcp_ms": 1500,
+    "cls": 0,
+    "tbt_ms": 1500,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/FOq5eO7P/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/cane-lp002": {
+    "status": "done",
+    "score": 68,
+    "grade": "D",
+    "lcp_ms": 1600,
+    "cls": 0.05,
+    "tbt_ms": 1600,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/I4VANfI0/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/soulsmart-foldable-walking-cane-with-led": {
+    "status": "done",
+    "score": 65,
+    "grade": "D",
+    "lcp_ms": 1600,
+    "cls": 0.13,
+    "tbt_ms": 897,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/NN8klkWE/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/products/soulsmart-black-2-handles-foldable-smart-easy-up-cane-with-led-light-2xaaa-batteries-not-included?view=landing": {
+    "status": "done",
+    "score": 62,
+    "grade": "D",
+    "lcp_ms": 1900,
+    "cls": 0.01,
+    "tbt_ms": 2900,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/N0UB21J5/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/soulsmart-give-them-more-independence": {
+    "status": "done",
+    "score": 73,
+    "grade": "C",
+    "lcp_ms": 1600,
+    "cls": 0,
+    "tbt_ms": 472,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/Tdivyc56/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/products/livmore-red-under-desk-electric-stepper-with-lcd-display?view=landing": {
+    "status": "done",
+    "score": 65,
+    "grade": "D",
+    "lcp_ms": 1500,
+    "cls": 0,
+    "tbt_ms": 1900,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/bniWM89W/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/livmore-black-electric-stepper-v5": {
+    "status": "done",
+    "score": 49,
+    "grade": "F",
+    "lcp_ms": 5400,
+    "cls": 0.21,
+    "tbt_ms": 794,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/Hex5O3F9/",
+    "tested_at": "2026-09-10T19:28:30.000Z"
+  },
+  "https://www.shoplc.com/pages/livmore-stepper-favorite-chair-listicle": {
+    "status": "done",
+    "score": 66,
+    "grade": "D",
+    "lcp_ms": 2100,
+    "cls": 0,
+    "tbt_ms": 662,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/sBzJoLXx/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/livmore-stepper-swelling-nightfall": {
+    "status": "done",
+    "score": 70,
+    "grade": "C",
+    "lcp_ms": 1600,
+    "cls": 0,
+    "tbt_ms": 676,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/80gE1TiF/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/livmore-stepper-6-reasons-when-walking-hurts": {
+    "status": "done",
+    "score": 78,
+    "grade": "C",
+    "lcp_ms": 1400,
+    "cls": 0,
+    "tbt_ms": 425,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/3TZjMkwH/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/online-auctions-tsl": {
+    "status": "done",
+    "score": 60,
+    "grade": "D",
+    "lcp_ms": 2100,
+    "cls": 0.1,
+    "tbt_ms": 2300,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/Rhcknkct/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?variant=52279301865785": {
+    "status": "done",
+    "score": 55,
+    "grade": "E",
+    "lcp_ms": 2200,
+    "cls": 0.12,
+    "tbt_ms": 6400,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/rWtfohn7/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?view=flat-back-lgd-v2": {
+    "status": "done",
+    "score": 58,
+    "grade": "E",
+    "lcp_ms": 2000,
+    "cls": 0,
+    "tbt_ms": 4100,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/DjM2vLc4/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/all-day-comfort-flat-back-diamond-listicle": {
+    "status": "done",
+    "score": 73,
+    "grade": "C",
+    "lcp_ms": 1300,
+    "cls": 0,
+    "tbt_ms": 731,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/LnpZbAEk/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/everyday-diamonds-less-worry-listicle": {
+    "status": "done",
+    "score": 73,
+    "grade": "C",
+    "lcp_ms": 1500,
+    "cls": 0,
+    "tbt_ms": 572,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/u3ShV3cf/",
+    "tested_at": "2026-09-10T19:30:20.000Z"
+  },
+  "https://www.shoplc.com/pages/side-sleeper-flat-back-diamond-listicle": {
+    "status": "done",
+    "score": 76,
+    "grade": "C",
+    "lcp_ms": 1500,
+    "cls": 0,
+    "tbt_ms": 482,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/e65ynKDR/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?view=flat-back-lp-v2": {
+    "status": "done",
+    "score": 62,
+    "grade": "D",
+    "lcp_ms": 1900,
+    "cls": 0.03,
+    "tbt_ms": 6500,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/EBjjZr5A/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?view=flatback-studs-iceglass&variant=54279795507513": {
+    "status": "done",
+    "score": 67,
+    "grade": "D",
+    "lcp_ms": 1700,
+    "cls": 0,
+    "tbt_ms": 1100,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/1vGhQVG3/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/collections/gold-embossed-sheets-v2": {
+    "status": "done",
+    "score": 68,
+    "grade": "D",
+    "lcp_ms": 1700,
+    "cls": 0.05,
+    "tbt_ms": 2500,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/lUu9qFjI/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/collections/gold-sheet-zodiac-page/lunar-zodiac": {
+    "status": "done",
+    "score": 63,
+    "grade": "D",
+    "lcp_ms": 2200,
+    "cls": 0.03,
+    "tbt_ms": 6500,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/hrgpH75u/",
+    "tested_at": "2026-09-10T19:34:40.000Z"
+  },
+  "https://www.shoplc.com/collections/gold-sheet-patriotic": {
+    "status": "done",
+    "score": 60,
+    "grade": "D",
+    "lcp_ms": 2600,
+    "cls": 0.03,
+    "tbt_ms": 4800,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/ZJVOGyqe/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/pages/gold-sheet-lp-v1": {
+    "status": "done",
+    "score": 64,
+    "grade": "D",
+    "lcp_ms": 1700,
+    "cls": 0,
+    "tbt_ms": 961,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/yCvZrxVN/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/collections/gold-sheet-listicle": {
+    "status": "done",
+    "score": 76,
+    "grade": "C",
+    "lcp_ms": 1500,
+    "cls": 0,
+    "tbt_ms": 399,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/cTYxeKlj/",
+    "tested_at": "2026-09-10T19:32:10.000Z"
+  },
+  "https://www.shoplc.com/collections/lgd-meta-2026?view=lgd-v2": {
+    "status": "error",
+    "message": "Lighthouse: page took too long (no CPU idle period)",
+    "test_id": "JChNUdvz",
+    "tested_at": "2026-09-10T19:34:40.000Z"
+  },
+  "https://www.shoplc.com/products/d-joy-asscher-cut-white-topaz-ring-in-14k-yg-over-sterling-silver-size-4-0-1-35-ctw?variant=54193828954425": {
+    "status": "done",
+    "score": 68,
+    "grade": "D",
+    "lcp_ms": 1500,
+    "cls": 0.01,
+    "tbt_ms": 1000,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/Adgy2KXN/",
+    "tested_at": "2026-09-10T19:34:40.000Z"
+  }
+}
