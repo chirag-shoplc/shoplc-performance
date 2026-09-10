@@ -218,7 +218,8 @@
   "https://www.shoplc.com/collections/lgd-meta-2026?view=lgd-v2": {
     "status": "error",
     "message": "Lighthouse: page took too long (no CPU idle period)",
-    "tested_at": "2026-09-10T03:44:39.808Z"
+    "tested_at": "2026-09-10T05:34:20.249Z",
+    "test_id": "WArf6Fia"
   },
   "https://www.shoplc.com/products/d-joy-asscher-cut-white-topaz-ring-in-14k-yg-over-sterling-silver-size-4-0-1-35-ctw?variant=54193828954425": {
     "status": "done",
