@@ -122,7 +122,8 @@
   "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?variant=52279301865785": {
     "status": "error",
     "message": "Lighthouse: page took too long to load (no CPU idle period)",
-    "tested_at": "2026-09-24T09:46:09.613Z"
+    "test_id": "JzSjlChI",
+    "tested_at": "2026-09-24T17:18:55.822Z"
   },
   "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?view=flat-back-lgd-v2": {
     "status": "done",
@@ -195,9 +196,14 @@
     "tested_at": "2026-09-24T09:48:42.469Z"
   },
   "https://www.shoplc.com/collections/gold-sheet-listicle": {
-    "status": "error",
-    "message": "Error generating Lighthouse report",
-    "tested_at": "2026-09-24T09:48:42.859Z"
+    "status": "done",
+    "score": 70,
+    "grade": "C",
+    "lcp_ms": 2100,
+    "cls": 0,
+    "tbt_ms": 262,
+    "report_url": "https://gtmetrix.com/reports/www.shoplc.com/cKFMPU3l/",
+    "tested_at": "2026-09-24T17:18:43.976Z"
   },
   "https://www.shoplc.com/products/luxuriant-lab-grown-diamond-earring-in-18k-yg-vermeilsterling-silver-0-50-ctw?view=flatback-studs-iceglass&variant=54279795507513": {
     "status": "done",
