@@ -351,7 +351,7 @@ function PagesTable({ records, campaignFilter, setCampaignFilter, campaigns }) {
               <th>Page</th>
               <th className="hide-sm">Campaign</th>
               <th>Health</th>
-              <th>Score</th>
+              <th>Performance</th>
               <th>Appears in</th>
               <th className="hide-md">Ready to tap</th>
               <th className="hide-md">Trend</th>
@@ -422,7 +422,7 @@ function DayTab({ catalog, dateKeys, days }) {
             <tr>
               <th>Page</th>
               <th>Health</th>
-              <th>Score</th>
+              <th>Performance</th>
               <th>Appears in</th>
               <th className="hide-sm">Ready to tap</th>
               <th className="hide-md">Stability</th>
@@ -513,8 +513,9 @@ function Legend() {
       {open && (
         <div className="legend-body">
           <p>
-            Scores come from daily GTmetrix checks. A higher score means the page is faster and easier for shoppers to
-            use. Slow pages tend to lose sales — especially after about 2–3 seconds of waiting.
+            The score is the Performance percentage on that day’s GTmetrix report — the same number the report labels
+            Performance. A higher score means the page is faster and easier for shoppers to use. Slow pages tend to lose
+            sales — especially after about 2–3 seconds of waiting.
           </p>
           <ul>
             <li>
