@@ -1,6 +1,8 @@
 import { db, must } from '@/lib/supabase';
 import { METRICS, GRADE_RANK, SITE, pageKey, pageName } from '@/lib/pages';
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 // Same shape as the original monitor's data.js: page list + metric schema.
 // Scores themselves are loaded live from /api/sb (benchmark_runs).

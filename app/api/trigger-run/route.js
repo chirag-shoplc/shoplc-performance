@@ -4,6 +4,8 @@ import { waitUntil } from '@vercel/functions';
 import { COOKIE, makeSession, isAdminPassword } from '@/lib/auth';
 import { startRun, tick, chainNextTick } from '@/lib/queue';
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 export const maxDuration = 60;
 
 export async function POST(req) {
