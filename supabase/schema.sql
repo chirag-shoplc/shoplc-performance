@@ -1,4 +1,4 @@
--- Shop LC Performance Monitor — run once in Supabase SQL Editor
+-- Shop LC Performance Monitor — run once in Supabase SQL Editor, then run migrate_002.sql
 create extension if not exists pgcrypto;
 
 create table if not exists monitored_urls (
