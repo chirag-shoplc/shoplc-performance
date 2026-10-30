@@ -1,11 +1,5 @@
-import './globals.css';
-
-export const metadata = { title: 'Shop LC Performance Monitor', description: 'Daily GTmetrix benchmark for Shop LC pages' };
-
+// The dashboard itself is the static page in /public/monitor.html (served at "/").
+export const metadata = { title: 'Shop LC Performance Monitor' };
 export default function RootLayout({ children }) {
-  return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  );
+  return (<html lang="en"><body>{children}</body></html>);
 }
