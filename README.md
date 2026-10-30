@@ -2,6 +2,19 @@
 
 Daily GTmetrix benchmark for Shop LC pages (Desktop + Mobile), hosted on Vercel with Supabase storage.
 
+The dashboard UI (`public/monitor.html`, served at `/`) is the VGL Brand Website Performance Monitor
+front-end, wired to this app's own API instead of Netlify functions / GitHub Actions:
+
+| Original                              | Here                                   |
+|---------------------------------------|----------------------------------------|
+| `data.js` (static)                    | `/data.js` — page list + thresholds from Supabase |
+| Supabase REST `benchmark_runs`, `monitored_urls`, `url_change_log` | `/api/sb/rest/v1/*` (server-side proxy; writes need the admin passphrase) |
+| `/.netlify/functions/trigger-run`     | `/api/trigger-run` — queues GTmetrix tests |
+| `/.netlify/functions/list-runs`       | `/api/list-runs`                        |
+| GitHub Actions 5am job                | Vercel Cron `/api/cron` + `/api/tick` queue |
+
+Added on top of the original: a **GTmetrix Report** row with links to each test's full report.
+
 - **GTmetrix Benchmark** — every page × device, colour-coded against thresholds, day-by-day timeline, cards or table.
 - **Actionable** — rule engine ranks the top fixes per page (CRITICAL / HIGH / MEDIUM), mobile weighted first.
 - **Monitored URLs** — add, remove, reorder, pause pages and pick the GTmetrix test location (admin).
@@ -23,7 +36,7 @@ Each test uses GTmetrix API credits (16 tests per full run for 8 pages).
 
 ## Setup (≈10 minutes)
 
-1. **Supabase** — create a project → SQL Editor → paste and run `supabase/schema.sql` (creates tables and seeds the 8 Shop LC pages).
+1. **Supabase** — create a project → SQL Editor → run `supabase/schema.sql`, then `supabase/migrate_002.sql`.
    Optional: then run `supabase/seed_history.sql` to import the 60 days of Shop LC history (1 Sep – 30 Oct 2026) from the original monitor, so the trend starts full.
    Copy *Project URL* and the *service_role* key from Project Settings → API.
 2. **GTmetrix** — Account → API → copy your API key.
