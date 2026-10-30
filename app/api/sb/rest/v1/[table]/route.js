@@ -5,6 +5,8 @@ import { db, must } from '@/lib/supabase';
 import { isAdminRequest } from '@/lib/auth';
 import { pageKey, pageName, toMonitorRow, SITE } from '@/lib/pages';
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 
 const HISTORY_DAYS = 12;
 
