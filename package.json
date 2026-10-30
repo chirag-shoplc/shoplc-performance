@@ -1,5 +1,5 @@
 {
-  "name": "shoplc-perf-dashboard",
+  "name": "shoplc-perf-monitor",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,9 +8,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.49.4",
+    "@vercel/functions": "1.6.0",
     "next": "14.2.35",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "recharts": "^2.13.0"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   }
 }
