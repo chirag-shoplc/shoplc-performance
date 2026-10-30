@@ -1182,6 +1182,16 @@ details.lh-details[open] > summary .lh-chev { transform: rotate(90deg); }
 .rpt:hover { text-decoration: underline; }
 .rpt.none { color: var(--muted-2); font-weight: 400; }
 tr.rpt-row td { padding-top: 8px; padding-bottom: 8px; }
+/* Monitored URLs: add / remove (added for the Shop LC deployment) */
+.urls td.uact, .urls th.uact { width: 1%; white-space: nowrap; text-align: right; }
+.urls tr.removed td { background: rgb(253, 240, 239); }
+.urls tr.removed .urlinput { text-decoration: line-through; color: var(--muted); }
+.urls tr.added td { background: rgb(238, 247, 241); }
+.urls tr.addrow td { background: rgb(250, 248, 242); }
+.urls .urm-note { display: block; margin-top: 5px; font-size: 11.5px; color: var(--tl-red); font-weight: 600; }
+.urls .unew { font-size: 10px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--tl-green); padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+.urls .ubtn.urm { padding: 5px 11px; }
+.urls td .urlinput.utype { min-width: 200px; }
 </style>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -3234,6 +3244,22 @@ let URL_EDITING   = false;     // is the table in edit mode?
 let URL_EDITOR    = "";        // who is editing (captured at unlock)
 const URL_AUDIT   = [];        // [{page,site,old,new,who,when}]
 
+const URL_REMOVED = new Set();  // page ids marked for removal (edit mode)
+let   URL_ADDED   = [];         // [{id,type,url,name,site}] new pages (edit mode)
+const KNOWN_TYPES = ["Home","Product / PDP","Category / PLP","RA Auction / PLP","RA Auction / Landing",
+                     "RA Auction / PDP","Funnel / Cart","Funnel / Checkout"];
+function slugKey(type){
+  const site = (PAGES[0] && PAGES[0].site) || "Shop LC";
+  const pre  = site === "Shop LC" ? "slc_" : site.toLowerCase().replace(/[^a-z0-9]+/g,"_") + "_";
+  const map  = { "Home":"home","Product / PDP":"pdp","Category / PLP":"plp","RA Auction / PLP":"ra_plp",
+                 "RA Auction / Landing":"ra_lp","RA Auction / PDP":"ra_pdp","Funnel / Cart":"cart","Funnel / Checkout":"checkout" };
+  let base = pre + (map[type] || type.toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"") || "page");
+  let key = base, n = 2;
+  const taken = id => PAGES.some(p => p.id === id) || URL_ADDED.some(a => a.id === id);
+  while (taken(key)) key = base + "_" + (n++);
+  return key;
+}
+function urlEsc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;"); }
 function urlFor(p){
   return (p.id in URL_OVERRIDES) ? URL_OVERRIDES[p.id] : (p.url || "");
 }
@@ -3246,7 +3272,8 @@ function renderUrls(){
   const t = document.getElementById("urlsTable");
   if (!t) return;
   t.classList.toggle("editing", URL_EDITING);
-  let html = '<thead><tr><th>Site</th><th>Location</th><th>Type</th><th>URL</th></tr></thead><tbody>';
+  let html = '<thead><tr><th>Site</th><th>Location</th><th>Type</th><th>URL</th>' +
+             (URL_EDITING ? '<th class="uact"></th>' : '') + '</tr></thead><tbody>';
   let i = 0;
   while (i < PAGES.length){
     const site = PAGES[i].site || "\u2014";
@@ -3258,8 +3285,9 @@ function renderUrls(){
       const first = (k === i);
       const url = urlFor(p);
       const safe = url.replace(/"/g, "&quot;");
-      const dirty = URL_EDITING && (url !== (p.url || ""));
-      html += '<tr class="' + (first ? 'site-start' : '') + (dirty ? ' dirty' : '') + '">';
+      const removed = URL_EDITING && URL_REMOVED.has(p.id);
+      const dirty = URL_EDITING && !removed && (url !== (p.url || ""));
+      html += '<tr class="' + (first ? 'site-start' : '') + (dirty ? ' dirty' : '') + (removed ? ' removed' : '') + '">';
       if (first){
         html += '<td class="site" rowspan="' + span + '">' +
                 '<span class="site-name">' + site + '</span></td>';
@@ -3268,7 +3296,10 @@ function renderUrls(){
       html += '<td class="type">' + (p.type || "\u2014") + '</td>';
       if (URL_EDITING){
         html += '<td><input class="urlinput" type="url" data-pid="' + p.id +
-                '" value="' + safe + '" placeholder="https://\u2026" autocomplete="off"></td>';
+                '" value="' + safe + '" placeholder="https://\u2026" autocomplete="off"' + (removed ? ' disabled' : '') + '>' +
+                (removed ? '<span class="urm-note">Will be removed on save \u00b7 history is kept</span>' : '') + '</td>' +
+                '<td class="uact"><button type="button" class="ubtn ghost urm" data-rm="' + p.id + '">' +
+                (removed ? 'Undo' : 'Remove') + '</button></td>';
       } else {
         html += '<td>' + (url ? '<a href="' + safe + '" target="_blank" rel="noopener">' + url + '</a>' : '\u2014') + '</td>';
       }
@@ -3276,9 +3307,53 @@ function renderUrls(){
     }
     i += span;
   }
+  if (URL_EDITING){
+    const site = (PAGES[0] && PAGES[0].site) || "Shop LC";
+    const loc  = SITE_LOCATION[site] || "\u2014";
+    URL_ADDED.forEach(function(a, ai){
+      html += '<tr class="added"><td class="site"><span class="site-name">' + urlEsc(a.site) + '</span></td>' +
+              '<td class="loc">' + loc + '</td><td class="type">' + urlEsc(a.type) + ' <span class="unew">New</span></td>' +
+              '<td><a href="' + urlEsc(a.url) + '" target="_blank" rel="noopener">' + urlEsc(a.url) + '</a></td>' +
+              '<td class="uact"><button type="button" class="ubtn ghost" data-unadd="' + ai + '">Cancel</button></td></tr>';
+    });
+    const used = PAGES.map(p => p.type).concat(URL_ADDED.map(a => a.type));
+    html += '<tr class="addrow site-start"><td class="site"><span class="site-name">' + urlEsc(site) + '</span></td>' +
+            '<td class="loc">' + loc + '</td>' +
+            '<td><input class="urlinput utype" id="newType" list="typeList" placeholder="Page type, e.g. Campaign / Cane" autocomplete="off">' +
+            '<datalist id="typeList">' + KNOWN_TYPES.filter(t => used.indexOf(t) === -1).map(t => '<option value="' + t + '">').join('') + '</datalist></td>' +
+            '<td><input class="urlinput" id="newUrl" type="url" placeholder="https://www.shoplc.com/\u2026" autocomplete="off">' +
+            '<span class="urm-note" id="addErr"></span></td>' +
+            '<td class="uact"><button type="button" class="ubtn primary" id="addUrlBtn">+ Add page</button></td></tr>';
+  }
   html += '</tbody>';
   t.innerHTML = html;
   if (URL_EDITING){
+    t.querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => {
+      const id = b.getAttribute("data-rm");
+      if (URL_REMOVED.has(id)) URL_REMOVED.delete(id); else URL_REMOVED.add(id);
+      renderUrls(); refreshUrlStatus();
+    }));
+    t.querySelectorAll("[data-unadd]").forEach(b => b.addEventListener("click", () => {
+      URL_ADDED.splice(Number(b.getAttribute("data-unadd")), 1);
+      renderUrls(); refreshUrlStatus();
+    }));
+    const addB = document.getElementById("addUrlBtn");
+    const doAdd = () => {
+      const type = document.getElementById("newType").value.trim();
+      const url  = document.getElementById("newUrl").value.trim();
+      const err  = document.getElementById("addErr");
+      if (!type){ err.textContent = "Enter a page type / name."; return; }
+      if (!/^https?:\/\/.+/i.test(url)){ err.textContent = "URL must start with http:// or https://"; return; }
+      const clash = PAGES.some(p => !URL_REMOVED.has(p.id) && (p.type||"").toLowerCase() === type.toLowerCase()) ||
+                    URL_ADDED.some(a => a.type.toLowerCase() === type.toLowerCase());
+      if (clash){ err.textContent = "A page with this type already exists \u2014 use a different name."; return; }
+      const site = (PAGES[0] && PAGES[0].site) || "Shop LC";
+      URL_ADDED.push({ id: slugKey(type), type: type, url: url, site: site, name: site + " \u2014 " + type });
+      renderUrls(); refreshUrlStatus();
+      const nt = document.getElementById("newType"); if (nt) nt.focus();
+    };
+    addB.addEventListener("click", doAdd);
+    document.getElementById("newUrl").addEventListener("keydown", e => { if (e.key === "Enter") doAdd(); });
     t.querySelectorAll(".urlinput").forEach(inp => {
       inp.addEventListener("input", () => {
         URL_OVERRIDES[inp.getAttribute("data-pid")] = inp.value.trim();
@@ -3302,7 +3377,7 @@ function urlDiffs(){
 function refreshUrlStatus(){
   const s = document.getElementById("urlsStatus");
   if (!s) return;
-  const n = urlDiffs().length;
+  const n = urlDiffs().filter(d => !URL_REMOVED.has(d.page.id)).length + URL_ADDED.length + URL_REMOVED.size;
   if (!URL_EDITING){ s.textContent = ""; s.className = "urls-status"; return; }
   s.className = "urls-status" + (n ? " dirty" : "");
   s.textContent = n ? (n + " unsaved change" + (n>1?"s":"")) : "No changes yet";
@@ -3360,14 +3435,19 @@ function initUrlEditor(){
   cancB.addEventListener("click", () => { exitEdit(true); });
 
   saveB.addEventListener("click", async () => {
-    const diffs = urlDiffs();
-    if (!diffs.length){ exitEdit(false); return; }
+    const diffs = urlDiffs().filter(d => !URL_REMOVED.has(d.page.id));
+    const adds  = URL_ADDED.slice();
+    const rems  = PAGES.filter(p => URL_REMOVED.has(p.id));
+    if (!diffs.length && !adds.length && !rems.length){ exitEdit(false); return; }
+    if (rems.length && !confirm("Stop monitoring " + rems.length + " page" + (rems.length>1?"s":"") + "?\n\n" +
+        rems.map(p => "\u2022 " + (p.type || p.name)).join("\n") + "\n\nTheir past results stay in the history.")) return;
     const badly = diffs.filter(d => !/^https?:\/\/.+/i.test(d.newUrl));
     if (badly.length){ alert("These URLs don't look valid (must start with http:// or https://):\n\n" +
         badly.map(d => "\u2022 " + (d.page.name||d.page.id)).join("\n")); return; }
     saveB.disabled = true; saveB.textContent = "Saving\u2026";
     try {
-      await saveUrlChanges(diffs, URL_EDITOR);
+      if (diffs.length) await saveUrlChanges(diffs, URL_EDITOR);
+      await saveAddRemove(adds, rems, URL_EDITOR);
       diffs.forEach(d => {                             // reflect new values as the baseline
         d.page.url = d.newUrl;
       });
@@ -3376,6 +3456,7 @@ function initUrlEditor(){
         ? "Saved. The daily 05:00 job will use the new URLs from tomorrow."
         : "Applied for this session only. Supabase isn't configured, so nothing was persisted \u2014 update index.html / data.js to make it permanent.";
       alert(note);
+      if (adds.length || rems.length) location.reload();   // reload so every tab picks up the new page list
     } catch(e){
       console.error(e);
       alert("Couldn't save to Supabase (" + e.message + "). No changes were persisted.");
@@ -3386,6 +3467,7 @@ function initUrlEditor(){
 }
 function exitEdit(discard){
   if (discard) seedUrlOverridesFromPages();
+  URL_REMOVED.clear(); URL_ADDED = [];
   URL_EDITING = false;
   document.getElementById("urlEdit").hidden  = false;
   document.getElementById("urlSave").hidden  = true;
@@ -3430,6 +3512,28 @@ async function saveUrlChanges(diffs, who){
     headers:Object.assign({ Prefer:"return=minimal" }, headers),
     body:JSON.stringify(log)
   });
+  if (!lg.ok) throw new Error("Log HTTP " + lg.status);
+}
+
+/* ---- add / remove monitored pages ---- */
+async function saveAddRemove(adds, rems, who){
+  if (!adds.length && !rems.length) return;
+  const when = new Date().toISOString();
+  const base = SUPABASE_URL.replace(/\/+$/,"");
+  const headers = { apikey:SUPABASE_ANON_KEY, Authorization:"Bearer "+SUPABASE_ANON_KEY, "Content-Type":"application/json" };
+  if (adds.length){
+    const up = await fetch(base + "/rest/v1/" + URLS_TABLE + "?on_conflict=page_key", { method:"POST", headers:headers,
+      body: JSON.stringify(adds.map(a => ({ page_key:a.id, site:a.site, type:a.type, name:a.name, url:a.url,
+                                           location:SITE_LOCATION[a.site]||"", updated_at:when, updated_by:who }))) });
+    if (!up.ok) throw new Error("Add HTTP " + up.status);
+  }
+  for (const p of rems){
+    const del = await fetch(base + "/rest/v1/" + URLS_TABLE + "?page_key=eq." + encodeURIComponent(p.id), { method:"DELETE", headers:headers });
+    if (!del.ok) throw new Error("Remove HTTP " + del.status);
+  }
+  const log = adds.map(a => ({ page_key:a.id, site:a.site, page_name:a.name, old_url:"", new_url:a.url, changed_by:who, changed_at:when, action:"added" }))
+    .concat(rems.map(p => ({ page_key:p.id, site:p.site||"", page_name:p.name||p.id, old_url:p.url||"", new_url:"", changed_by:who, changed_at:when, action:"removed" })));
+  const lg = await fetch(base + "/rest/v1/" + URL_LOG_TABLE, { method:"POST", headers:headers, body: JSON.stringify(log) });
   if (!lg.ok) throw new Error("Log HTTP " + lg.status);
 }
 
