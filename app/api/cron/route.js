@@ -3,6 +3,8 @@ import { waitUntil } from '@vercel/functions';
 import { isCron } from '@/lib/auth';
 import { startRun, tick, chainNextTick } from '@/lib/queue';
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+export const revalidate = 0;
 export const maxDuration = 60;
 
 // Vercel Cron (see vercel.json) — daily scheduled run.
