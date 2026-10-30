@@ -42,7 +42,8 @@ export async function GET(req, { params }) {
     if (params.table === 'url_change_log') {
       const log = must(await sb.from('url_changes').select('*').order('created_at', { ascending: false }).limit(100));
       return NextResponse.json(log.map((c) => ({
-        page_key: c.page_key || null, site: c.site || SITE, page_name: c.page_name || c.page_type,
+        page_key: c.page_key || null, site: c.site || SITE,
+        page_name: (c.page_name || c.page_type) + (c.action === 'added' ? ' \u00b7 added' : c.action === 'removed' ? ' \u00b7 removed' : ''),
         old_url: c.old_url, new_url: c.new_url, changed_by: c.changed_by, changed_at: c.created_at,
       })));
     }
@@ -64,20 +65,52 @@ export async function POST(req, { params }) {
       for (const r of rows) {
         if (!/^https?:\/\/.+/i.test(r.url || '')) return NextResponse.json({ message: 'Invalid URL' }, { status: 400 });
         const hit = urls.find((u) => pageKey(u) === r.page_key);
-        if (hit) must(await sb.from('monitored_urls').update({ url: r.url }).eq('id', hit.id));
-        else must(await sb.from('monitored_urls').insert({ page_key: r.page_key, page_type: r.type || r.page_key, name: r.name || null, site: r.site || SITE, url: r.url, sort: urls.length + 1 }));
+        if (hit) {
+          // URL edit, or re-adding a page that was removed earlier (keeps its history)
+          const patch = { url: r.url, active: true };
+          if (!hit.active && r.type) Object.assign(patch, { page_type: String(r.type).slice(0, 80), name: r.name || hit.name });
+          must(await sb.from('monitored_urls').update(patch).eq('id', hit.id));
+        } else {
+          const sort = Math.max(0, ...urls.map((u) => u.sort || 0)) + 1;
+          must(await sb.from('monitored_urls').insert({
+            page_key: String(r.page_key).slice(0, 80), page_type: String(r.type || r.page_key).slice(0, 80),
+            name: r.name || null, site: r.site || SITE, url: r.url,
+            location: process.env.GTMETRIX_LOCATION_LABEL || 'Chicago, IL, USA', sort,
+          }));
+        }
       }
       return new Response(null, { status: 201 });
     }
     if (params.table === 'url_change_log') {
       must(await sb.from('url_changes').insert(rows.map((r) => ({
-        changed_by: String(r.changed_by || 'admin').slice(0, 60), action: 'changed',
+        changed_by: String(r.changed_by || 'admin').slice(0, 60),
+        action: ['added', 'removed'].includes(r.action) ? r.action : 'changed',
         page_key: r.page_key, site: r.site || SITE, page_name: r.page_name, page_type: r.page_name,
         old_url: r.old_url, new_url: r.new_url,
       }))));
       return new Response(null, { status: 201 });
     }
     return NextResponse.json({ message: 'unknown table' }, { status: 404 });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ message: e.message }, { status: 500 });
+  }
+}
+
+// Remove a monitored page (admin). Soft delete: the page stops being tested, its history stays.
+export async function DELETE(req, { params }) {
+  if (!(await isAdminRequest(req))) return NextResponse.json({ message: 'Admin passphrase required' }, { status: 401 });
+  if (params.table !== 'monitored_urls') return NextResponse.json({ message: 'not allowed' }, { status: 405 });
+  const key = (req.nextUrl.searchParams.get('page_key') || '').replace(/^eq\./, '');
+  if (!key) return NextResponse.json({ message: 'page_key required' }, { status: 400 });
+  try {
+    const sb = db();
+    const urls = must(await sb.from('monitored_urls').select('*'));
+    const hit = urls.find((u) => pageKey(u) === key);
+    if (!hit) return NextResponse.json({ message: 'not found' }, { status: 404 });
+    if (!hit.page_key) must(await sb.from('monitored_urls').update({ page_key: key }).eq('id', hit.id));
+    must(await sb.from('monitored_urls').update({ active: false }).eq('id', hit.id));
+    return new Response(null, { status: 204 });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ message: e.message }, { status: 500 });
