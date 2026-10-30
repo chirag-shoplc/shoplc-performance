@@ -7,7 +7,7 @@ front-end, wired to this app's own API instead of Netlify functions / GitHub Act
 
 | Original                              | Here                                   |
 |---------------------------------------|----------------------------------------|
-| `data.js` (static)                    | `/data.js` — page list + thresholds from Supabase |
+| `data.js` (static)                    | `/data.js` (→ `/api/perf-data`) — page list + thresholds from Supabase |
 | Supabase REST `benchmark_runs`, `monitored_urls`, `url_change_log` | `/api/sb/rest/v1/*` (server-side proxy; writes need the admin passphrase) |
 | `/.netlify/functions/trigger-run`     | `/api/trigger-run` — queues GTmetrix tests |
 | `/.netlify/functions/list-runs`       | `/api/list-runs`                        |
