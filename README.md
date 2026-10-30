@@ -13,7 +13,7 @@ front-end, wired to this app's own API instead of Netlify functions / GitHub Act
 | `/.netlify/functions/list-runs`       | `/api/list-runs`                        |
 | GitHub Actions 5am job                | Vercel Cron `/api/cron` + `/api/tick` queue |
 
-Added on top of the original: a **GTmetrix Report** row with links to each test's full report.
+Added on top of the original: a **GTmetrix Report** row with links to each test's full report, and **Add page / Remove** in the Monitored URLs editor (removed pages stop being tested; their history is kept).
 
 - **GTmetrix Benchmark** — every page × device, colour-coded against thresholds, day-by-day timeline, cards or table.
 - **Actionable** — rule engine ranks the top fixes per page (CRITICAL / HIGH / MEDIUM), mobile weighted first.
