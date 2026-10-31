@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { waitUntil } from '@vercel/functions';
 import { COOKIE, makeSession, isAdminPassword } from '@/lib/auth';
-import { startRun, tick, chainNextTick } from '@/lib/queue';
+import { startRun, tick, kickWorker } from '@/lib/queue';
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
 export const revalidate = 0;
@@ -20,8 +20,8 @@ export async function POST(req) {
       const pageKeys = body.only ? String(body.only).split(',').map((s) => s.trim()).filter(Boolean) : null;
       const out = await startRun({ trigger: 'manual', pageKeys, device: body.device || 'both' });
       if (out.alreadyRunning) return NextResponse.json({ ok: false, error: 'A run is already in progress — wait for it to finish.' }, { status: 409 });
-      const t = await tick(8000);
-      if (t.remaining) waitUntil(chainNextTick(req.nextUrl.origin));
+      await tick(8000);                         // submit the first tests right away
+      waitUntil(kickWorker(req.nextUrl.origin)); // background worker finishes the rest
       res = NextResponse.json({ ok: true, queued: out.queued });
     } catch (e) {
       return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
