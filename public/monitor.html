@@ -1192,6 +1192,10 @@ tr.rpt-row td { padding-top: 8px; padding-bottom: 8px; }
 .urls .unew { font-size: 10px; font-weight: 800; letter-spacing: .04em; color: #fff; background: var(--tl-green); padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
 .urls .ubtn.urm { padding: 5px 11px; }
 .urls td .urlinput.utype { min-width: 200px; }
+/* Run Tests: daily automatic run card */
+.rt-credits { font-size: 13px; color: var(--ink); }
+.rt-credits.low { color: var(--tl-red); }
+#rtAuto .rt-no { font-size: 13px; }
 </style>
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1415,6 +1419,27 @@ tr.rpt-row td { padding-top: 8px; padding-bottom: 8px; }
       <div class="rt-warn" role="note">
         <span class="ic" aria-hidden="true">⚠</span>
         <span><strong>Go easy on back-to-back runs.</strong> Testing too aggressively can make Shopify / Cloudflare treat the checks as bot traffic and start blocking them — which shows up here as failed runs. It’s best to leave a gap between benchmarks rather than queuing several in quick succession.</span>
+      </div>
+
+      <!-- 0 · daily automatic run (added for the Shop LC deployment) -->
+      <div class="rt-step" id="rtAuto">
+        <div class="rt-hd"><span class="rt-no">&#9200;</span><h3>Daily automatic run</h3>
+          <span class="sub">Full daily suite, every day at 05:00 UTC (10:30 IST) &middot; switch off to save GTmetrix credits</span></div>
+        <div class="rt-opts">
+          <div class="rt-opt-line">
+            <span class="lbl">Schedule</span>
+            <label class="rt-toggle">
+              <input type="checkbox" id="rtAutoToggle">
+              <span class="rt-switch" aria-hidden="true"></span>
+              <span id="rtAutoTxt">Loading&hellip;</span>
+            </label>
+          </div>
+          <div class="rt-opt-line">
+            <span class="lbl">Credits</span>
+            <span id="rtCredits" class="rt-credits">&hellip;</span>
+          </div>
+        </div>
+        <div class="rt-msg" id="rtAutoMsg"></div>
       </div>
 
       <!-- 1 · what to run -->
@@ -3764,6 +3789,7 @@ function initRunTests(){
       });
       if (res.ok){
         RT_PASS = pass;
+        loadAutoRun();
         gate.hidden = true;
         form.classList.add("on");
         updateNote();
@@ -4078,6 +4104,54 @@ function initRunTests(){
   }
   refresh.addEventListener("click", loadRuns);
 }
+
+/* ---------- daily automatic run toggle + GTmetrix credits ---------- */
+function renderAutoRun(s){
+  const tg = document.getElementById("rtAutoToggle");
+  const tx = document.getElementById("rtAutoTxt");
+  const cr = document.getElementById("rtCredits");
+  if (!tg) return;
+  tg.checked = !!s.autoRun;
+  tx.innerHTML = s.autoRun
+    ? '<b>On</b> &middot; ' + s.dailyPages + ' pages &times; Desktop + Mobile = ' + s.testsPerRun + ' GTmetrix tests per day'
+    : '<b>Off</b> &middot; nothing runs automatically; use Run tests now when you need a report';
+  if (s.credits !== null && s.credits !== undefined){
+    const refill = s.refill ? new Date(s.refill).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) : null;
+    cr.innerHTML = '<b>' + s.credits + '</b> GTmetrix API credits left' + (refill ? ' &middot; refills ' + refill : '');
+    cr.className = "rt-credits" + (s.credits < s.testsPerRun ? " low" : "");
+  } else {
+    cr.textContent = "Couldn\u2019t read the GTmetrix balance" + (s.creditsError ? " (" + s.creditsError + ")" : "");
+    cr.className = "rt-credits low";
+  }
+}
+async function loadAutoRun(){
+  try {
+    const r = await fetch("/api/settings", { cache:"no-store" });
+    const j = await r.json();
+    if (j.ok) renderAutoRun(j);
+  } catch(e){ console.warn("settings load failed", e); }
+}
+(function initAutoRun(){
+  const tg = document.getElementById("rtAutoToggle");
+  if (!tg) return;
+  tg.addEventListener("change", async function(){
+    const want = tg.checked;
+    const msg = document.getElementById("rtAutoMsg");
+    tg.disabled = true; msg.className = "rt-msg"; msg.textContent = "Saving\u2026";
+    try {
+      const r = await fetch("/api/settings", { method:"POST", headers:{ "Content-Type":"application/json" },
+                                               body: JSON.stringify({ passphrase: RT_PASS, autoRun: want }) });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || !j.ok) throw new Error(j.error || ("HTTP " + r.status));
+      renderAutoRun(j);
+      msg.className = "rt-msg ok";
+      msg.textContent = want ? "\u2705 Daily automatic run switched ON." : "Daily automatic run switched OFF \u2014 no GTmetrix credits will be used automatically.";
+    } catch(e){
+      tg.checked = !want;
+      msg.className = "rt-msg bad"; msg.textContent = "Couldn\u2019t save: " + e.message;
+    } finally { tg.disabled = false; }
+  });
+})();
 
 /* ---------- top-level tab switching ---------- */
 function initTabs(){
