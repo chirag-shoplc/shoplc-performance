@@ -36,7 +36,7 @@ Each test uses GTmetrix API credits (16 tests per full run for 8 pages).
 
 ## Setup (≈10 minutes)
 
-1. **Supabase** — create a project → SQL Editor → run `supabase/schema.sql`, then `supabase/migrate_002.sql`.
+1. **Supabase** — create a project → SQL Editor → run `supabase/schema.sql`, then `supabase/migrate_002.sql` and `supabase/migrate_003.sql`.
    Optional: then run `supabase/seed_history.sql` to import the 60 days of Shop LC history (1 Sep – 30 Oct 2026) from the original monitor, so the trend starts full.
    Copy *Project URL* and the *service_role* key from Project Settings → API.
 2. **GTmetrix** — Account → API → copy your API key.
